@@ -31,13 +31,19 @@
     <div id="menu-btn">☰</div>
   </header>
 
-  <!-- ハンバーガーメニュー内フォーム -->
+  <!-- ハンバーガーメニュー -->
   <div id="menu-panel" class="menu-hidden">
     <div class="input-box">
       <input type="text" id="song-title" placeholder="曲名">
       <input type="text" id="song-url" placeholder="YouTube URL">
       <input type="text" id="folder-name" placeholder="フォルダ名（任意）">
       <button id="save-btn">追加</button>
+    </div>
+    <div class="toggle-box">
+      <label>
+        <input type="checkbox" id="secret-mode">
+        裏モード（バックグラウンド対応）
+      </label>
     </div>
   </div>
 
@@ -51,8 +57,10 @@
 
   <div id="now-playing">Now Playing: -</div>
 
+  <!-- ▼ プレイヤー部分（裏モード時はaudioを使う） -->
   <div id="player-container">
     <div id="player"></div>
+    <audio id="audio-player" controls class="hidden"></audio>
   </div>
 
   <ul id="song-list"></ul>
