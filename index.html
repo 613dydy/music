@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔥My音楽サイト🔥</title>
+  <title>Yuprofy</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+  <!-- YouTube Player API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-  <h1>🎵 My音楽リスト 🎵</h1>
+  <header>
+    <h1>Yuprofy</h1>
+  </header>
 
   <div class="input-box">
     <input type="text" id="song-title" placeholder="曲名">
@@ -18,7 +22,11 @@
   </div>
 
   <div id="player-container">
-    <iframe id="player" src="" allow="autoplay" frameborder="0" allowfullscreen></iframe>
+    <div id="player"></div>
+  </div>
+
+  <div class="controls">
+    <button id="play-all">▶ 再生</button>
   </div>
 
   <ul id="song-list"></ul>
