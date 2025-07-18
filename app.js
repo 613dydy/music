@@ -2,10 +2,22 @@ const songTitleInput = document.getElementById("song-title");
 const songUrlInput = document.getElementById("song-url");
 const saveBtn = document.getElementById("save-btn");
 const songList = document.getElementById("song-list");
-const player = document.getElementById("player");
+const playAllBtn = document.getElementById("play-all");
 
 let songs = [];
 let currentIndex = 0;
+let player;
+
+// YouTube Player APIの準備
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player("player", {
+    height: "0",
+    width: "0",
+    events: {
+      "onStateChange": onPlayerStateChange
+    }
+  });
+}
 
 // 曲保存
 saveBtn.addEventListener("click", async () => {
@@ -40,14 +52,21 @@ async function loadSongs() {
     const li = document.createElement("li");
     li.innerHTML = `
       <span>${data.title}</span>
-      <div>
-        <button onclick="playSong('${data.url}')">▶再生</button>
-        <button onclick="deleteSong('${doc.id}')">削除</button>
-      </div>
+      <button onclick="deleteSong('${doc.id}')">削除</button>
     `;
     songList.appendChild(li);
   });
 }
+
+// ▶ 再生ボタン
+playAllBtn.addEventListener("click", () => {
+  if (songs.length === 0) {
+    alert("曲がないぜブロー！");
+    return;
+  }
+  currentIndex = 0;
+  playSong(songs[currentIndex].url);
+});
 
 // 曲再生
 function playSong(url) {
@@ -56,18 +75,15 @@ function playSong(url) {
     alert("正しいYouTube URLを入れてくれ！");
     return;
   }
-  player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-  currentIndex = songs.findIndex(song => song.url === url);
-
-  // 自動再生用（簡易：30秒で次に行く仮仕様、後で正確にする）
-  setTimeout(playNextSong, 30000); 
+  player.loadVideoById(videoId);
 }
 
-// 次の曲
-function playNextSong() {
-  if (songs.length === 0) return;
-  currentIndex = (currentIndex + 1) % songs.length;
-  playSong(songs[currentIndex].url);
+// YouTube終了時 → 次の曲
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.ENDED) {
+    currentIndex = (currentIndex + 1) % songs.length;
+    playSong(songs[currentIndex].url);
+  }
 }
 
 // 曲削除
