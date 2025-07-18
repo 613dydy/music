@@ -22,11 +22,11 @@ header h1 {
 #menu-btn {
   font-size: 2rem;
   cursor: pointer;
-  color: #fff; /* 白で常に見える */
+  color: #fff;
   user-select: none;
 }
 
-/* メニューパネルのスライドアニメーション */
+/* メニューのアニメーション */
 #menu-panel {
   overflow: hidden;
   max-height: 0;
@@ -38,7 +38,7 @@ header h1 {
 }
 
 #menu-panel.menu-show {
-  max-height: 300px; /* パネルの高さ（必要に応じ調整） */
+  max-height: 400px;
   opacity: 1;
 }
 
@@ -47,6 +47,11 @@ header h1 {
   flex-direction: column;
   gap: 10px;
   padding: 10px;
+}
+
+.toggle-box {
+  padding: 10px;
+  font-size: 0.9rem;
 }
 
 input, select {
@@ -101,6 +106,15 @@ button:hover {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+#audio-player {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
 }
 
 ul {
