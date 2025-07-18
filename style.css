@@ -11,17 +11,20 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 header h1 {
   color: #1DB954;
   font-size: 2rem;
+  margin: 0;
 }
 
 #menu-btn {
-  font-size: 1.8rem;
+  font-size: 2rem;
   cursor: pointer;
   color: #fff;
+  user-select: none;
 }
 
 #menu-panel {
