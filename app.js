@@ -11,7 +11,7 @@ const repeatBtn = document.getElementById("repeat-btn");
 const nowPlaying = document.getElementById("now-playing");
 
 let songs = [];
-let filteredSongs = [];
+let displaySongs = [];
 let currentIndex = 0;
 let player;
 let isShuffle = false;
@@ -63,7 +63,7 @@ async function loadSongs(selectedFolder = "All") {
     folders.add(data.folder);
   });
 
-  // フォルダ選択更新
+  // フォルダ更新
   folderSelect.innerHTML = "";
   folders.forEach(folder => {
     const opt = document.createElement("option");
@@ -79,13 +79,14 @@ async function loadSongs(selectedFolder = "All") {
 function renderSongs() {
   const folder = folderSelect.value;
   const search = searchInput.value.toLowerCase();
-  filteredSongs = songs.filter(song =>
+
+  displaySongs = songs.filter(song =>
     (folder === "All" || song.folder === folder) &&
     song.title.toLowerCase().includes(search)
   );
 
   songList.innerHTML = "";
-  filteredSongs.forEach((song, index) => {
+  displaySongs.forEach((song, index) => {
     const videoId = extractVideoId(song.url);
     const li = document.createElement("li");
     li.draggable = true;
@@ -102,25 +103,25 @@ function renderSongs() {
   initDragAndDrop();
 }
 
-// プレイリスト再生
+// 再生ボタン
 playAllBtn.addEventListener("click", () => {
-  if (filteredSongs.length === 0) {
+  if (displaySongs.length === 0) {
     alert("曲がないぜブロー！");
     return;
   }
   currentIndex = 0;
-  playSong(filteredSongs[currentIndex].url);
+  playSong(displaySongs[currentIndex].url);
 });
 
-// ランダム・リピート
+// シャッフル・リピート
 shuffleBtn.addEventListener("click", () => {
   isShuffle = !isShuffle;
-  shuffleBtn.textContent = isShuffle ? "✅シャッフル" : "🔀 シャッフル";
+  shuffleBtn.textContent = isShuffle ? "Shuffle: ON" : "Shuffle: OFF";
 });
 
 repeatBtn.addEventListener("click", () => {
   repeatMode = repeatMode === "all" ? "one" : "all";
-  repeatBtn.textContent = repeatMode === "one" ? "🔂 リピート: 1曲" : "🔁 リピート: 全曲";
+  repeatBtn.textContent = repeatMode === "one" ? "Repeat: One" : "Repeat: All";
 });
 
 // 再生
@@ -131,7 +132,7 @@ function playSong(url) {
     return;
   }
   player.loadVideoById(videoId);
-  nowPlaying.textContent = "Now Playing: " + filteredSongs[currentIndex].title;
+  nowPlaying.textContent = "Now Playing: " + displaySongs[currentIndex].title;
   highlightPlaying(currentIndex);
 }
 
@@ -139,12 +140,12 @@ function playSong(url) {
 function onPlayerStateChange(event) {
   if (event.data === YT.PlayerState.ENDED) {
     if (repeatMode === "one") {
-      playSong(filteredSongs[currentIndex].url);
+      playSong(displaySongs[currentIndex].url);
     } else {
       currentIndex = isShuffle
-        ? Math.floor(Math.random() * filteredSongs.length)
-        : (currentIndex + 1) % filteredSongs.length;
-      playSong(filteredSongs[currentIndex].url);
+        ? Math.floor(Math.random() * displaySongs.length)
+        : (currentIndex + 1) % displaySongs.length;
+      playSong(displaySongs[currentIndex].url);
     }
   }
 }
@@ -164,7 +165,7 @@ async function deleteSong(id) {
   }
 }
 
-// 検索・フォルダ切り替え
+// 検索・フォルダ
 searchInput.addEventListener("input", renderSongs);
 folderSelect.addEventListener("change", renderSongs);
 
@@ -184,19 +185,17 @@ function initDragAndDrop() {
       e.dataTransfer.dropEffect = "move";
     });
 
-    item.addEventListener("drop", async e => {
+    item.addEventListener("drop", e => {
       e.preventDefault();
       const targetIndex = +item.dataset.index;
-      const [draggedItem] = filteredSongs.splice(draggedIndex, 1);
-      filteredSongs.splice(targetIndex, 0, draggedItem);
-
-      // DB保存順序更新は今回は省略（必要なら追加可）
+      const [draggedItem] = displaySongs.splice(draggedIndex, 1);
+      displaySongs.splice(targetIndex, 0, draggedItem);
       renderSongs();
     });
   });
 }
 
-// YouTube ID抽出
+// YouTube ID
 function extractVideoId(url) {
   const match = url.match(/(?:v=|youtu\.be\/)([^&]+)/);
   return match ? match[1] : null;
