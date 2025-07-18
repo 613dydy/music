@@ -11,6 +11,8 @@ const repeatBtn = document.getElementById("repeat-btn");
 const nowPlaying = document.getElementById("now-playing");
 const menuBtn = document.getElementById("menu-btn");
 const menuPanel = document.getElementById("menu-panel");
+const secretModeToggle = document.getElementById("secret-mode");
+const audioPlayer = document.getElementById("audio-player");
 
 let songs = [];
 let displaySongs = [];
@@ -18,8 +20,9 @@ let currentIndex = 0;
 let player;
 let isShuffle = false;
 let repeatMode = "all";
+let secretMode = false; // ✅ 裏モードフラグ
 
-// ✅ YouTube APIの初期化
+// ✅ YouTube API
 function onYouTubeIframeAPIReady() {
   player = new YT.Player("player", {
     height: "0",
@@ -28,9 +31,15 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
-// ✅ ハンバーガーメニュー開閉（ぬるっと展開）
+// ✅ ハンバーガーメニュー
 menuBtn.addEventListener("click", () => {
   menuPanel.classList.toggle("menu-show");
+});
+
+// ✅ 裏モードON/OFF切り替え
+secretModeToggle.addEventListener("change", () => {
+  secretMode = secretModeToggle.checked;
+  alert(secretMode ? "裏モードON（バックグラウンド再生対応）" : "裏モードOFF");
 });
 
 // ✅ 曲保存
@@ -57,7 +66,7 @@ saveBtn.addEventListener("click", async () => {
   loadSongs();
 });
 
-// ✅ 曲リスト読み込み
+// ✅ 曲読み込み
 async function loadSongs(selectedFolder = "All") {
   songList.innerHTML = "";
   const snapshot = await db.collection("songs").orderBy("createdAt", "desc").get();
@@ -83,7 +92,7 @@ async function loadSongs(selectedFolder = "All") {
   renderSongs();
 }
 
-// ✅ リスト描画
+// ✅ 曲リスト描画
 function renderSongs() {
   const folder = folderSelect.value;
   const search = searchInput.value.toLowerCase();
@@ -106,7 +115,6 @@ function renderSongs() {
       <button onclick="deleteSong('${song.id}'); event.stopPropagation();">削除</button>
     `;
 
-    // ✅ 曲名タップで即再生
     li.addEventListener("click", () => {
       currentIndex = index;
       playSong(displaySongs[currentIndex].url);
@@ -128,51 +136,73 @@ playAllBtn.addEventListener("click", () => {
   playSong(displaySongs[currentIndex].url);
 });
 
-// ✅ シャッフル・リピート
-shuffleBtn.addEventListener("click", () => {
-  isShuffle = !isShuffle;
-  shuffleBtn.textContent = isShuffle ? "Shuffle: ON" : "Shuffle: OFF";
-});
-
-repeatBtn.addEventListener("click", () => {
-  repeatMode = repeatMode === "all" ? "one" : "all";
-  repeatBtn.textContent = repeatMode === "one" ? "Repeat: One" : "Repeat: All";
-});
-
-// ✅ 再生開始
+// ✅ 再生処理
 function playSong(url) {
-  const videoId = extractVideoId(url);
-  if (!videoId) {
-    alert("正しいYouTube URLを入れてくれ！");
-    return;
-  }
-  player.loadVideoById(videoId);
   nowPlaying.textContent = "Now Playing: " + displaySongs[currentIndex].title;
   highlightPlaying(currentIndex);
-}
 
-// ✅ 曲終了時 → 次の曲へ
-function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.ENDED) {
-    if (repeatMode === "one") {
-      playSong(displaySongs[currentIndex].url);
-    } else {
-      currentIndex = isShuffle
-        ? Math.floor(Math.random() * displaySongs.length)
-        : (currentIndex + 1) % displaySongs.length;
-      playSong(displaySongs[currentIndex].url);
+  if (secretMode) {
+    // ✅ 裏モード時：YouTube音声だけ抽出
+    const audioUrl = getAudioStreamUrl(url);
+    if (!audioUrl) {
+      alert("音声URL取得失敗（裏モードOFFにして試せ）");
+      return;
     }
+    document.getElementById("player").classList.add("hidden");
+    audioPlayer.classList.remove("hidden");
+    audioPlayer.src = audioUrl;
+    audioPlayer.play();
+  } else {
+    // ✅ 通常モード
+    document.getElementById("player").classList.remove("hidden");
+    audioPlayer.classList.add("hidden");
+    const videoId = extractVideoId(url);
+    if (!videoId) {
+      alert("正しいYouTube URLを入れてくれ！");
+      return;
+    }
+    player.loadVideoById(videoId);
   }
 }
 
-// ✅ 再生中の曲をハイライト
+// ✅ YouTube音声URLを取得（※簡易デモ用。実際はytdlなど必要）
+function getAudioStreamUrl(url) {
+  const videoId = extractVideoId(url);
+  if (!videoId) return null;
+  // ※本来はサーバー側でytdlなどを使う。ここはデモ用の疑似URL。
+  return `https://www.youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=${videoId}`;
+}
+
+// ✅ 曲終了時
+function onPlayerStateChange(event) {
+  if (!secretMode && event.data === YT.PlayerState.ENDED) {
+    nextSong();
+  }
+}
+
+audioPlayer.addEventListener("ended", () => {
+  if (secretMode) nextSong();
+});
+
+function nextSong() {
+  if (repeatMode === "one") {
+    playSong(displaySongs[currentIndex].url);
+  } else {
+    currentIndex = isShuffle
+      ? Math.floor(Math.random() * displaySongs.length)
+      : (currentIndex + 1) % displaySongs.length;
+    playSong(displaySongs[currentIndex].url);
+  }
+}
+
+// ✅ ハイライト
 function highlightPlaying(index) {
   document.querySelectorAll("li").forEach((li, i) => {
     li.classList.toggle("playing", i === index);
   });
 }
 
-// ✅ 曲削除
+// ✅ 削除
 async function deleteSong(id) {
   if (confirm("この曲を削除する？")) {
     await db.collection("songs").doc(id).delete();
@@ -184,7 +214,7 @@ async function deleteSong(id) {
 searchInput.addEventListener("input", renderSongs);
 folderSelect.addEventListener("change", renderSongs);
 
-// ✅ ドラッグ＆ドロップ（順番変更）
+// ✅ 並べ替え
 function initDragAndDrop() {
   const items = document.querySelectorAll("li");
   let draggedIndex = null;
@@ -210,7 +240,7 @@ function initDragAndDrop() {
   });
 }
 
-// ✅ YouTube動画ID抽出
+// ✅ YouTube ID抽出
 function extractVideoId(url) {
   const match = url.match(/(?:v=|youtu\.be\/)([^&]+)/);
   return match ? match[1] : null;
