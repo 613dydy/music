@@ -31,8 +31,8 @@ input, select {
 }
 
 button {
-  padding: 10px;
-  font-size: 1rem;
+  padding: 8px 12px;
+  font-size: 0.9rem;
   background: #1DB954;
   color: white;
   border: none;
@@ -49,6 +49,7 @@ button:hover {
   flex-wrap: wrap;
   gap: 5px;
   margin-bottom: 15px;
+  justify-content: center;
 }
 
 #now-playing {
@@ -85,15 +86,14 @@ li {
   margin-bottom: 8px;
   border-radius: 5px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 li img {
   width: 60px;
   height: 45px;
   border-radius: 3px;
-  margin-right: 8px;
 }
 
 li span {
