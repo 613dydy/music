@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔥ゆうぴろ🔥</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <h1>🎵 My音楽リスト 🎵</h1>
+
+  <div class="input-box">
+    <input type="text" id="song-title" placeholder="曲名">
+    <input type="text" id="song-url" placeholder="YouTube URL">
+    <button id="save-btn">追加</button>
+  </div>
+
+  <ul id="song-list"></ul>
+
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
