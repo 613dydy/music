@@ -18,10 +18,10 @@ header h1 {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
-input {
+input, select {
   padding: 10px;
   font-size: 1rem;
   border: none;
@@ -44,6 +44,20 @@ button:hover {
   background: #1ed760;
 }
 
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+#now-playing {
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #1DB954;
+}
+
 #player-container {
   width: 100%;
   position: relative;
@@ -58,11 +72,6 @@ button:hover {
   left: 0;
   width: 100%;
   height: 100%;
-}
-
-.controls {
-  text-align: center;
-  margin-bottom: 20px;
 }
 
 ul {
@@ -80,8 +89,20 @@ li {
   align-items: center;
 }
 
+li img {
+  width: 60px;
+  height: 45px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
 li span {
-  color: #fff;
+  flex: 1;
+}
+
+li.playing {
+  background: #1DB954;
+  color: #000;
 }
 
 li button {
