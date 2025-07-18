@@ -1,15 +1,17 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Helvetica', sans-serif;
+  background: #121212;
+  color: #fff;
   max-width: 500px;
   margin: 0 auto;
   padding: 20px;
-  background: #f4f4f4;
 }
 
-h1 {
+header h1 {
   text-align: center;
-  font-size: 1.8rem;
-  color: #333;
+  color: #1DB954;
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
 .input-box {
@@ -22,16 +24,16 @@ h1 {
 input {
   padding: 10px;
   font-size: 1rem;
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
+  background: #282828;
+  color: #fff;
 }
 
 button {
   padding: 10px;
   font-size: 1rem;
-  background: #007bff;
+  background: #1DB954;
   color: white;
   border: none;
   border-radius: 5px;
@@ -39,7 +41,7 @@ button {
 }
 
 button:hover {
-  background: #0056b3;
+  background: #1ed760;
 }
 
 #player-container {
@@ -47,7 +49,7 @@ button:hover {
   position: relative;
   padding-bottom: 56.25%;
   height: 0;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 #player {
@@ -58,24 +60,28 @@ button:hover {
   height: 100%;
 }
 
+.controls {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 ul {
   list-style: none;
   padding: 0;
 }
 
 li {
-  background: white;
+  background: #181818;
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   border-radius: 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-li a {
-  text-decoration: none;
-  color: #007bff;
+li span {
+  color: #fff;
 }
 
 li button {
