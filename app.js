@@ -9,13 +9,15 @@ const playAllBtn = document.getElementById("play-all");
 const shuffleBtn = document.getElementById("shuffle-btn");
 const repeatBtn = document.getElementById("repeat-btn");
 const nowPlaying = document.getElementById("now-playing");
+const menuBtn = document.getElementById("menu-btn");
+const menuPanel = document.getElementById("menu-panel");
 
 let songs = [];
 let displaySongs = [];
 let currentIndex = 0;
 let player;
 let isShuffle = false;
-let repeatMode = "all"; // all or one
+let repeatMode = "all";
 
 // YouTube API
 function onYouTubeIframeAPIReady() {
@@ -25,6 +27,11 @@ function onYouTubeIframeAPIReady() {
     events: { "onStateChange": onPlayerStateChange }
   });
 }
+
+// ハンバーガーメニュー開閉
+menuBtn.addEventListener("click", () => {
+  menuPanel.classList.toggle("hidden");
+});
 
 // 曲保存
 saveBtn.addEventListener("click", async () => {
@@ -95,15 +102,21 @@ function renderSongs() {
     li.innerHTML = `
       <img src="https://img.youtube.com/vi/${videoId}/default.jpg">
       <span>${song.title}</span>
-      <button onclick="deleteSong('${song.id}')">削除</button>
+      <button onclick="deleteSong('${song.id}'); event.stopPropagation();">削除</button>
     `;
+
+    li.addEventListener("click", () => {
+      currentIndex = index;
+      playSong(displaySongs[currentIndex].url);
+    });
+
     songList.appendChild(li);
   });
 
   initDragAndDrop();
 }
 
-// 再生ボタン
+// ▶ 再生
 playAllBtn.addEventListener("click", () => {
   if (displaySongs.length === 0) {
     alert("曲がないぜブロー！");
