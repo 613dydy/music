@@ -7,18 +7,38 @@ body {
   padding: 20px;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 header h1 {
-  text-align: center;
   color: #1DB954;
   font-size: 2rem;
-  margin-bottom: 20px;
+}
+
+#menu-btn {
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #fff;
+}
+
+#menu-panel {
+  background: #181818;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.hidden {
+  display: none;
 }
 
 .input-box {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 15px;
 }
 
 input, select {
@@ -88,6 +108,7 @@ li {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
 }
 
 li img {
