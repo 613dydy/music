@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yuprofy</title>
 
+  <!-- PWA対応 -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1DB954">
   <script>
@@ -16,8 +17,12 @@
   </script>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+
+  <!-- YouTube Player API -->
   <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
@@ -26,7 +31,7 @@
     <div id="menu-btn">☰</div>
   </header>
 
-  <!-- ハンバーガーメニュー内フォーム -->
+  <!-- ハンバーガーメニュー内フォーム（初期は閉じた状態） -->
   <div id="menu-panel" class="hidden">
     <div class="input-box">
       <input type="text" id="song-title" placeholder="曲名">
