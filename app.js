@@ -36,7 +36,7 @@ menuBtn.addEventListener("click", () => {
   menuPanel.classList.toggle("menu-show");
 });
 
-// ✅ 裏モードON/OFF切り替え
+// ✅ 裏モードON/OFF
 secretModeToggle.addEventListener("change", () => {
   secretMode = secretModeToggle.checked;
   alert(secretMode ? "裏モードON（バックグラウンド再生対応）" : "裏モードOFF");
@@ -79,7 +79,6 @@ async function loadSongs(selectedFolder = "All") {
     folders.add(data.folder);
   });
 
-  // フォルダ更新
   folderSelect.innerHTML = "";
   folders.forEach(folder => {
     const opt = document.createElement("option");
@@ -92,7 +91,7 @@ async function loadSongs(selectedFolder = "All") {
   renderSongs();
 }
 
-// ✅ 曲リスト描画
+// ✅ リスト表示
 function renderSongs() {
   const folder = folderSelect.value;
   const search = searchInput.value.toLowerCase();
@@ -136,26 +135,34 @@ playAllBtn.addEventListener("click", () => {
   playSong(displaySongs[currentIndex].url);
 });
 
-// ✅ 再生処理
+// ✅ 再生処理（バグ修正済み）
 function playSong(url) {
   nowPlaying.textContent = "Now Playing: " + displaySongs[currentIndex].title;
   highlightPlaying(currentIndex);
 
   if (secretMode) {
-    // ✅ 裏モード時：YouTube音声だけ抽出
+    // ✅ 裏モード時
     const audioUrl = getAudioStreamUrl(url);
     if (!audioUrl) {
       alert("音声URL取得失敗（裏モードOFFにして試せ）");
       return;
     }
+
+    if (player && player.stopVideo) {
+      player.stopVideo(); // ✅ YouTube停止
+    }
     document.getElementById("player").classList.add("hidden");
+
     audioPlayer.classList.remove("hidden");
     audioPlayer.src = audioUrl;
     audioPlayer.play();
   } else {
     // ✅ 通常モード
-    document.getElementById("player").classList.remove("hidden");
+    audioPlayer.pause(); // ✅ audio完全停止
     audioPlayer.classList.add("hidden");
+
+    document.getElementById("player").classList.remove("hidden");
+
     const videoId = extractVideoId(url);
     if (!videoId) {
       alert("正しいYouTube URLを入れてくれ！");
@@ -165,12 +172,11 @@ function playSong(url) {
   }
 }
 
-// ✅ YouTube音声URLを取得（※簡易デモ用。実際はytdlなど必要）
+// ✅ 裏モード音声URL取得
 function getAudioStreamUrl(url) {
   const videoId = extractVideoId(url);
   if (!videoId) return null;
-  // ※本来はサーバー側でytdlなどを使う。ここはデモ用の疑似URL。
-  return `https://www.youtubeinmp3.com/fetch/?video=https://www.youtube.com/watch?v=${videoId}`;
+  return `http://localhost:3000/audio?videoId=${videoId}`; // ✅ Nodeサーバー必須
 }
 
 // ✅ 曲終了時
@@ -210,7 +216,7 @@ async function deleteSong(id) {
   }
 }
 
-// ✅ 検索・フォルダ切り替え
+// ✅ 検索・フォルダ
 searchInput.addEventListener("input", renderSongs);
 folderSelect.addEventListener("change", renderSongs);
 
